@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 
 beforeEach((done) => {
-  mongoose.connect("mongodb://localhost:27017/JestDB",
+  mongoose.connect("mongodb://testing:testing@localhost:27017/JestDB",
     { useNewUrlParser: true, useUnifiedTopology: true },
     () => done());
 });
