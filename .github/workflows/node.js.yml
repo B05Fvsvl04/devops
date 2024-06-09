@@ -1,23 +1,16 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+name: Tests
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
+
     services:
       mongodb:
-        image: mongo:7.0.11-jammy
+        image: mongo:4.4.6
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: admin
-          MONGO_INITDB_DATABASE: JestDB
+          MONGO_INITDB_DATABASE: APP-DATABASE
         ports:
           - 27017:27017
         options: >-
@@ -28,11 +21,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Install mongosh
         run: |
           sudo apt-get install gnupg
           wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
-          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
           sudo apt-get update
           sudo apt-get install -y mongodb-mongosh
           mongosh --version
@@ -40,7 +34,16 @@ jobs:
       - name: Initalize MongoDB
         run: |
           mongosh --host localhost:27017 -u admin -p admin --authenticationDatabase admin <<EOF
-            db = db.getSiblingDB('JestDB');
-            db.createUser({ user: 'testing', pwd: 'testing', roles: [{ role: 'readWrite', db: 'JestDB' }] })
-            db.createCollection('my-testing-collection');
+            db = db.getSiblingDB('APP-DB');
+            db.createUser({ user: 'APP-USERNAME', pwd: 'APP-PASSWORD', roles: [{ role: 'readWrite', db: 'APP-DB' }] })
+            db.createCollection('APP-COLLECTION');
           EOF
+          # Do whatever you like in here
+
+    # do some other stuff, like setting up your build tools
+
+      - name: Test
+        run: |
+          echo "Run your integration Tests"
+     
+    # ...  
