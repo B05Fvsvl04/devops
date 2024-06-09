@@ -8,7 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+        
     services:
       mongodb:
         image: mongo:7.0.11
@@ -25,7 +28,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install mongosh
         run: |
@@ -43,12 +46,12 @@ jobs:
             db.createUser({ user: 'testing', pwd: 'testing', roles: [{ role: 'readWrite', db: 'JestDB' }] })
             db.createCollection('test-collection');
           EOF
-          # Do whatever you like in here
 
-    # do some other stuff, like setting up your build tools
-
-      - name: Test
-        run: |
-          echo "Run your integration Tests"
-     
-    # ...  
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
