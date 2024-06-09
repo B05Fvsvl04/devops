@@ -11,7 +11,7 @@ jobs:
 
     services:
       mongodb:
-        image: mongo:6.0.15
+        image: mongo:7.0.11
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: admin
@@ -19,7 +19,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd mongod
+          --health-cmd mongosh
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
