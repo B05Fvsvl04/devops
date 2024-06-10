@@ -47,6 +47,17 @@ jobs:
             db.createCollection('test-collection');
           EOF
 
+      - name: SAST actions/checkout
+        uses: AppThreat/sast-scan-action@master
+        with:
+          type: "javascript"
+
+      - name: Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: reports
+          path: reports
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
