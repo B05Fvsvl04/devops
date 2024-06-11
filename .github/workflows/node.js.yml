@@ -74,8 +74,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-    - run: docker build . --file Dockerfile --tag rgomezp/testing/testing-app:$(date +%s)
-    - run: docker images
+      run: |
+        docker build . --file Dockerfile --tag rgomezp/testing/testing-app:$(date +%s)
+        docker images
 
     - uses: actions/checkout@v3
     - name: Publish to Registry
