@@ -75,13 +75,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: |
-        docker build . -f Dockerfile -t rgomezp/testing/testing-app:$(date +%s)
-        docker images
-
+        docker build . -f Dockerfile -t rgomezp/testing/testing-app:$(date +%d)
+        
     - uses: actions/checkout@v3
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: rgomezp/testing/testing-app
+        name: rgomezp/testing/testing-app:$(date +%d)
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}  
