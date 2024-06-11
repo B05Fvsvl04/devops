@@ -1,9 +1,9 @@
 name: Tests
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   sonarcloud:
@@ -60,17 +60,6 @@ jobs:
             db.createCollection('test-collection');
           EOF
 
-      - name: SAST actions/checkout
-        uses: AppThreat/sast-scan-action@master
-        with:
-          type: "javascript"
-
-      - name: Artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: reports
-          path: reports
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -86,3 +75,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag testing-app:$(date +%s)
+
+    - uses: actions/checkout@v3
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      with:
+        name: rgomezp/testing
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}  
